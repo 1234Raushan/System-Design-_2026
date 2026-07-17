@@ -22,6 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Features\Students\Validators\" />
+    <Folder Include="Features\Students\Mappings\" />
     <Folder Include="Features\Users\Handlers\" />
     <Folder Include="Features\Users\Responses\" />
     <Folder Include="Features\Users\Validators\" />

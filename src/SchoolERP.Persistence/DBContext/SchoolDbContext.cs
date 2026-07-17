@@ -19,12 +19,10 @@ namespace SchoolERP.Persistence.DBContext
         #region DbSets
 
         public DbSet<User> Users => Set<User>();
-
         public DbSet<Role> Roles => Set<Role>();
-
         public DbSet<Permission> Permissions => Set<Permission>();
-
         public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
+        public DbSet<Student> Students => Set<Student>();
 
         #endregion
 

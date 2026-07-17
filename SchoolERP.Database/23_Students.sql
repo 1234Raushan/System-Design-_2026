@@ -1,14 +1,31 @@
 CREATE TABLE Students
 (
-    StudentId INT IDENTITY PRIMARY KEY,
-    AdmissionNo NVARCHAR(50),
-    ParentId INT,
-    CurrentClassId INT NULL,
-    FirstName NVARCHAR(100),
-    LastName NVARCHAR(100),
-    DOB DATE,
-    Gender NVARCHAR(20),
-    AdmissionDate DATE,
+    Id INT IDENTITY(1,1) PRIMARY KEY,
 
-    FOREIGN KEY(ParentId) REFERENCES Parents(ParentId)
+    AdmissionNumber NVARCHAR(50) NOT NULL,
+    RollNumber NVARCHAR(50) NOT NULL,
+
+    FirstName NVARCHAR(100) NOT NULL,
+    LastName NVARCHAR(100) NOT NULL,
+
+    DateOfBirth DATETIME2 NOT NULL,
+    Gender NVARCHAR(20) NOT NULL,
+
+    Email NVARCHAR(200) NULL,
+    PhoneNumber NVARCHAR(20) NULL,
+    Address NVARCHAR(500) NULL,
+
+    AdmissionDate DATETIME2 NOT NULL,
+
+    ClassId INT NULL,
+    SectionId INT NULL,
+
+    CreatedBy NVARCHAR(100) NULL,
+    CreatedDate DATETIME2 NOT NULL DEFAULT(GETUTCDATE()),
+
+    UpdatedBy NVARCHAR(100) NULL,
+    UpdatedDate DATETIME2 NULL,
+
+    IsDeleted BIT NOT NULL DEFAULT(0),
+    IsActive BIT NOT NULL DEFAULT(1)
 );
