@@ -26,18 +26,35 @@ public sealed class ExceptionMiddleware
         {
             _logger.LogError(ex, ex.Message);
 
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-            var response = new
-            {
-                Success = false,
-                StatusCode = context.Response.StatusCode,
-                Message = ex.Message
-            };
-
-            await context.Response.WriteAsync(
-                JsonSerializer.Serialize(response));
+            await HandleExceptionAsync(context, ex);
         }
+    }
+
+    private static async Task HandleExceptionAsync(
+        HttpContext context,
+        Exception exception)
+    {
+        context.Response.ContentType = "application/json";
+
+        var statusCode = exception switch
+        {
+            UnauthorizedAccessException => HttpStatusCode.Unauthorized,
+            ArgumentException => HttpStatusCode.BadRequest,
+            InvalidOperationException => HttpStatusCode.BadRequest,
+            KeyNotFoundException => HttpStatusCode.NotFound,
+            _ => HttpStatusCode.InternalServerError
+        };
+
+        context.Response.StatusCode = (int)statusCode;
+
+        var response = new
+        {
+            Success = false,
+            StatusCode = context.Response.StatusCode,
+            Message = exception.Message
+        };
+
+        await context.Response.WriteAsync(
+            JsonSerializer.Serialize(response));
     }
 }

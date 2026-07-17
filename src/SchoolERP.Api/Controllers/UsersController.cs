@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SchoolERP.Application.Features.Users.Commands.CreateUser;
 using SchoolERP.Application.Features.Users.Commands.DeleteUser;
@@ -13,6 +14,7 @@ namespace SchoolERP.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class UsersController : ControllerBase
     {
         private readonly IMediator _mediator;

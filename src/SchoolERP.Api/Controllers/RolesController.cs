@@ -1,6 +1,7 @@
 using AutoMapper;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SchoolERP.Application.Features.Roles.Commands.CreateRole;
 using SchoolERP.Application.Features.Roles.Commands.DeleteRole;
@@ -13,6 +14,7 @@ namespace SchoolERP.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize(Roles = "Admin")]
 public sealed class RolesController : ControllerBase
 {
     private readonly IMediator _mediator;
