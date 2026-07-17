@@ -1,13 +1,16 @@
-Admin
+System Users (Actors)
+
+The following users interact with the system:
+Super Admin
+School Admin
 Principal
 Vice Principal
 Teacher
 Student
-Parent
-Nurse
-Counselor
+Parent / Guardian
 Librarian
 Accountant
-HR
+HR Manager
 Transport Manager
-Security
+School Nurse
+Security Staff

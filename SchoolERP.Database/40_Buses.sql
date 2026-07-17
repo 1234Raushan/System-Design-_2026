@@ -1,0 +1,6 @@
+CREATE TABLE Buses
+(
+    BusId INT IDENTITY PRIMARY KEY,
+    BusNumber NVARCHAR(50),
+    DriverName NVARCHAR(100)
+);

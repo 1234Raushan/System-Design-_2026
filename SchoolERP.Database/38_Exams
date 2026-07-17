@@ -1,0 +1,8 @@
+CREATE TABLE Exams
+(
+    ExamId INT IDENTITY PRIMARY KEY,
+    AcademicYearId INT,
+    ExamName NVARCHAR(100),
+
+    FOREIGN KEY(AcademicYearId) REFERENCES AcademicYears(AcademicYearId)
+);

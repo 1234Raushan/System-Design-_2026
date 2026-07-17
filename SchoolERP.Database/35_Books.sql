@@ -1,0 +1,8 @@
+CREATE TABLE Books
+(
+    BookId INT IDENTITY PRIMARY KEY,
+    ISBN NVARCHAR(50),
+    BookName NVARCHAR(200),
+    Author NVARCHAR(100),
+    Publisher NVARCHAR(100)
+);

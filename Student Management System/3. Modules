@@ -1,13 +1,50 @@
-Admin User Module
-Principal Module
-Students Module
-Classes
-Teachers
-Attendance
-Fees
-Books 
-HR
-Librarian
+School Management System Modules
+|
+Administration
+    Admin User Module
+    Principal Module
+    Vice Principal Module
+
+Academic Management
+    Student Module
+    Teacher Module
+    Class Management Module
+    Attendance Module
+
+Finance
+    Fee Management Module
+    Accountant Module
+
+Library
+    Library Management Module
+
+Human Resources
+    HR Management Module
+
+Student Services
+    Nurse / Medical Module
+    Transport Management Module (optional)
+
 Security
-Nurse
-Accountant
+    Security Management Module
+
+Reports
+    Reports & Dashboard Module
+
+
+School Management System Modules
+1. Admin User Module
+2. Principal Module
+3. Vice Principal Module
+4. Student Module
+5. Parent Module
+6. Teacher Module
+7. Class Management Module
+8. Attendance Module
+9. Fee Management Module
+10. Library Management Module
+11. HR Management Module
+12. Accountant Module
+13. Nurse / Medical Module
+14. Security Management Module
+15. Reports & Dashboard Module

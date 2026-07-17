@@ -1,0 +1,1073 @@
+SET ANSI_NULLS ON;
+SET QUOTED_IDENTIFIER ON;
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.schemas WHERE name = 'dbo')
+BEGIN
+    EXEC('CREATE SCHEMA dbo');
+END;
+GO
+
+-- Core Security Tables
+IF OBJECT_ID(N'dbo.Roles', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Roles
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Roles PRIMARY KEY DEFAULT NEWID(),
+        Name NVARCHAR(100) NOT NULL,
+        Description NVARCHAR(500) NULL,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL,
+        UpdatedBy UNIQUEIDENTIFIER NULL,
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.Permissions', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Permissions
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Permissions PRIMARY KEY DEFAULT NEWID(),
+        Name NVARCHAR(100) NOT NULL,
+        Area NVARCHAR(100) NULL,
+        Description NVARCHAR(500) NULL,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL,
+        UpdatedBy UNIQUEIDENTIFIER NULL,
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.RolePermissions', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.RolePermissions
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_RolePermissions PRIMARY KEY DEFAULT NEWID(),
+        RoleId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_RolePermissions_Roles FOREIGN KEY REFERENCES dbo.Roles(Id),
+        PermissionId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_RolePermissions_Permissions FOREIGN KEY REFERENCES dbo.Permissions(Id),
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL,
+        UpdatedBy UNIQUEIDENTIFIER NULL,
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.Users', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Users
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Users PRIMARY KEY DEFAULT NEWID(),
+        Username NVARCHAR(100) NOT NULL,
+        Email NVARCHAR(255) NOT NULL,
+        PasswordHash NVARCHAR(512) NOT NULL,
+        FirstName NVARCHAR(100) NOT NULL,
+        LastName NVARCHAR(100) NOT NULL,
+        Phone NVARCHAR(30) NULL,
+        RoleId UNIQUEIDENTIFIER NULL CONSTRAINT FK_Users_Roles FOREIGN KEY REFERENCES dbo.Roles(Id),
+        LastLoginDate DATETIME2(7) NULL,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Users_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Users_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+-- Organization and Academic Tables
+IF OBJECT_ID(N'dbo.Departments', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Departments
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Departments PRIMARY KEY DEFAULT NEWID(),
+        Name NVARCHAR(200) NOT NULL,
+        Code NVARCHAR(50) NOT NULL,
+        HeadTeacherId UNIQUEIDENTIFIER NULL,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Departments_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Departments_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.AcademicYears', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.AcademicYears
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_AcademicYears PRIMARY KEY DEFAULT NEWID(),
+        Name NVARCHAR(100) NOT NULL,
+        StartDate DATE NOT NULL,
+        EndDate DATE NOT NULL,
+        IsCurrent BIT NOT NULL DEFAULT 0,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_AcademicYears_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_AcademicYears_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.Terms', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Terms
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Terms PRIMARY KEY DEFAULT NEWID(),
+        AcademicYearId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_Terms_AcademicYears FOREIGN KEY REFERENCES dbo.AcademicYears(Id),
+        Name NVARCHAR(100) NOT NULL,
+        StartDate DATE NOT NULL,
+        EndDate DATE NOT NULL,
+        SequenceNo INT NOT NULL DEFAULT 1,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Terms_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Terms_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.Classes', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Classes
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Classes PRIMARY KEY DEFAULT NEWID(),
+        Name NVARCHAR(100) NOT NULL,
+        GradeLevel INT NOT NULL,
+        Capacity INT NOT NULL DEFAULT 40,
+        DepartmentId UNIQUEIDENTIFIER NULL CONSTRAINT FK_Classes_Departments FOREIGN KEY REFERENCES dbo.Departments(Id),
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Classes_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Classes_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.Sections', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Sections
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Sections PRIMARY KEY DEFAULT NEWID(),
+        ClassId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_Sections_Classes FOREIGN KEY REFERENCES dbo.Classes(Id),
+        Name NVARCHAR(50) NOT NULL,
+        Capacity INT NOT NULL DEFAULT 40,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Sections_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Sections_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.Subjects', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Subjects
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Subjects PRIMARY KEY DEFAULT NEWID(),
+        Name NVARCHAR(200) NOT NULL,
+        Code NVARCHAR(50) NOT NULL,
+        DepartmentId UNIQUEIDENTIFIER NULL CONSTRAINT FK_Subjects_Departments FOREIGN KEY REFERENCES dbo.Departments(Id),
+        CreditHours INT NOT NULL DEFAULT 0,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Subjects_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Subjects_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+-- People Tables
+IF OBJECT_ID(N'dbo.Parents', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Parents
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Parents PRIMARY KEY DEFAULT NEWID(),
+        UserId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_Parents_Users FOREIGN KEY REFERENCES dbo.Users(Id),
+        FirstName NVARCHAR(100) NOT NULL,
+        LastName NVARCHAR(100) NOT NULL,
+        Phone NVARCHAR(30) NULL,
+        Email NVARCHAR(255) NULL,
+        Occupation NVARCHAR(200) NULL,
+        Relationship NVARCHAR(50) NULL,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Parents_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Parents_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.Teachers', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Teachers
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Teachers PRIMARY KEY DEFAULT NEWID(),
+        UserId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_Teachers_Users FOREIGN KEY REFERENCES dbo.Users(Id),
+        EmployeeNumber NVARCHAR(50) NOT NULL,
+        DepartmentId UNIQUEIDENTIFIER NULL CONSTRAINT FK_Teachers_Departments FOREIGN KEY REFERENCES dbo.Departments(Id),
+        Designation NVARCHAR(100) NULL,
+        DateOfJoining DATE NULL,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Teachers_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Teachers_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.Students', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Students
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Students PRIMARY KEY DEFAULT NEWID(),
+        UserId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_Students_Users FOREIGN KEY REFERENCES dbo.Users(Id),
+        AdmissionNumber NVARCHAR(50) NOT NULL,
+        RollNumber NVARCHAR(50) NULL,
+        ParentId UNIQUEIDENTIFIER NULL CONSTRAINT FK_Students_Parents FOREIGN KEY REFERENCES dbo.Parents(Id),
+        DateOfBirth DATE NULL,
+        Gender NVARCHAR(20) NULL,
+        ClassId UNIQUEIDENTIFIER NULL CONSTRAINT FK_Students_Classes FOREIGN KEY REFERENCES dbo.Classes(Id),
+        SectionId UNIQUEIDENTIFIER NULL CONSTRAINT FK_Students_Sections FOREIGN KEY REFERENCES dbo.Sections(Id),
+        AdmissionDate DATE NULL,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Students_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Students_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+-- Academic Assignment Tables
+IF OBJECT_ID(N'dbo.TeacherSubjects', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.TeacherSubjects
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_TeacherSubjects PRIMARY KEY DEFAULT NEWID(),
+        TeacherId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_TeacherSubjects_Teachers FOREIGN KEY REFERENCES dbo.Teachers(Id),
+        SubjectId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_TeacherSubjects_Subjects FOREIGN KEY REFERENCES dbo.Subjects(Id),
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_TeacherSubjects_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_TeacherSubjects_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.TeacherClasses', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.TeacherClasses
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_TeacherClasses PRIMARY KEY DEFAULT NEWID(),
+        TeacherId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_TeacherClasses_Teachers FOREIGN KEY REFERENCES dbo.Teachers(Id),
+        ClassId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_TeacherClasses_Classes FOREIGN KEY REFERENCES dbo.Classes(Id),
+        SectionId UNIQUEIDENTIFIER NULL CONSTRAINT FK_TeacherClasses_Sections FOREIGN KEY REFERENCES dbo.Sections(Id),
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_TeacherClasses_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_TeacherClasses_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.StudentClasses', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.StudentClasses
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_StudentClasses PRIMARY KEY DEFAULT NEWID(),
+        StudentId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_StudentClasses_Students FOREIGN KEY REFERENCES dbo.Students(Id),
+        ClassId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_StudentClasses_Classes FOREIGN KEY REFERENCES dbo.Classes(Id),
+        SectionId UNIQUEIDENTIFIER NULL CONSTRAINT FK_StudentClasses_Sections FOREIGN KEY REFERENCES dbo.Sections(Id),
+        AcademicYearId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_StudentClasses_AcademicYears FOREIGN KEY REFERENCES dbo.AcademicYears(Id),
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_StudentClasses_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_StudentClasses_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+-- Attendance Tables
+IF OBJECT_ID(N'dbo.AttendanceStatus', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.AttendanceStatus
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_AttendanceStatus PRIMARY KEY DEFAULT NEWID(),
+        Name NVARCHAR(100) NOT NULL,
+        Code NVARCHAR(20) NOT NULL,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_AttendanceStatus_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_AttendanceStatus_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.Attendance', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Attendance
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Attendance PRIMARY KEY DEFAULT NEWID(),
+        StudentId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_Attendance_Students FOREIGN KEY REFERENCES dbo.Students(Id),
+        AttendanceDate DATE NOT NULL,
+        StatusId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_Attendance_Status FOREIGN KEY REFERENCES dbo.AttendanceStatus(Id),
+        ClassId UNIQUEIDENTIFIER NULL CONSTRAINT FK_Attendance_Classes FOREIGN KEY REFERENCES dbo.Classes(Id),
+        SectionId UNIQUEIDENTIFIER NULL CONSTRAINT FK_Attendance_Sections FOREIGN KEY REFERENCES dbo.Sections(Id),
+        Remarks NVARCHAR(500) NULL,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Attendance_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Attendance_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+-- Fee Tables
+IF OBJECT_ID(N'dbo.FeeTypes', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.FeeTypes
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_FeeTypes PRIMARY KEY DEFAULT NEWID(),
+        Name NVARCHAR(200) NOT NULL,
+        Code NVARCHAR(50) NOT NULL,
+        Description NVARCHAR(500) NULL,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_FeeTypes_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_FeeTypes_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.FeeStructures', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.FeeStructures
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_FeeStructures PRIMARY KEY DEFAULT NEWID(),
+        ClassId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_FeeStructures_Classes FOREIGN KEY REFERENCES dbo.Classes(Id),
+        FeeTypeId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_FeeStructures_FeeTypes FOREIGN KEY REFERENCES dbo.FeeTypes(Id),
+        AcademicYearId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_FeeStructures_AcademicYears FOREIGN KEY REFERENCES dbo.AcademicYears(Id),
+        Amount DECIMAL(12,2) NOT NULL DEFAULT 0,
+        DueDate DATE NULL,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_FeeStructures_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_FeeStructures_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.StudentFees', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.StudentFees
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_StudentFees PRIMARY KEY DEFAULT NEWID(),
+        StudentId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_StudentFees_Students FOREIGN KEY REFERENCES dbo.Students(Id),
+        FeeStructureId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_StudentFees_FeeStructures FOREIGN KEY REFERENCES dbo.FeeStructures(Id),
+        AmountDue DECIMAL(12,2) NOT NULL DEFAULT 0,
+        AmountPaid DECIMAL(12,2) NOT NULL DEFAULT 0,
+        Balance DECIMAL(12,2) NOT NULL DEFAULT 0,
+        DueDate DATE NULL,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_StudentFees_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_StudentFees_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.FeePayments', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.FeePayments
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_FeePayments PRIMARY KEY DEFAULT NEWID(),
+        StudentFeeId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_FeePayments_StudentFees FOREIGN KEY REFERENCES dbo.StudentFees(Id),
+        PaymentDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        Amount DECIMAL(12,2) NOT NULL DEFAULT 0,
+        PaymentMethod NVARCHAR(50) NULL,
+        TransactionReference NVARCHAR(100) NULL,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_FeePayments_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_FeePayments_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+-- Library Tables
+IF OBJECT_ID(N'dbo.BookCategories', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.BookCategories
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_BookCategories PRIMARY KEY DEFAULT NEWID(),
+        Name NVARCHAR(200) NOT NULL,
+        Description NVARCHAR(500) NULL,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_BookCategories_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_BookCategories_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.Books', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Books
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Books PRIMARY KEY DEFAULT NEWID(),
+        Title NVARCHAR(250) NOT NULL,
+        Author NVARCHAR(250) NULL,
+        ISBN NVARCHAR(50) NULL,
+        CategoryId UNIQUEIDENTIFIER NULL CONSTRAINT FK_Books_BookCategories FOREIGN KEY REFERENCES dbo.BookCategories(Id),
+        Publisher NVARCHAR(250) NULL,
+        PublishedYear INT NULL,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Books_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Books_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.BookCopies', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.BookCopies
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_BookCopies PRIMARY KEY DEFAULT NEWID(),
+        BookId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_BookCopies_Books FOREIGN KEY REFERENCES dbo.Books(Id),
+        CopyNumber NVARCHAR(50) NOT NULL,
+        Condition NVARCHAR(50) NULL,
+        IsAvailable BIT NOT NULL DEFAULT 1,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_BookCopies_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_BookCopies_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.BookIssues', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.BookIssues
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_BookIssues PRIMARY KEY DEFAULT NEWID(),
+        BookCopyId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_BookIssues_BookCopies FOREIGN KEY REFERENCES dbo.BookCopies(Id),
+        StudentId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_BookIssues_Students FOREIGN KEY REFERENCES dbo.Students(Id),
+        IssueDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        DueDate DATE NOT NULL,
+        ReturnDate DATETIME2(7) NULL,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_BookIssues_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_BookIssues_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.BookReturns', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.BookReturns
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_BookReturns PRIMARY KEY DEFAULT NEWID(),
+        BookIssueId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_BookReturns_BookIssues FOREIGN KEY REFERENCES dbo.BookIssues(Id),
+        ReturnDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        Condition NVARCHAR(50) NULL,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_BookReturns_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_BookReturns_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.BookFines', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.BookFines
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_BookFines PRIMARY KEY DEFAULT NEWID(),
+        BookIssueId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_BookFines_BookIssues FOREIGN KEY REFERENCES dbo.BookIssues(Id),
+        Amount DECIMAL(12,2) NOT NULL DEFAULT 0,
+        PaidDate DATETIME2(7) NULL,
+        IsPaid BIT NOT NULL DEFAULT 0,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_BookFines_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_BookFines_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+-- Exam Tables
+IF OBJECT_ID(N'dbo.Exams', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Exams
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Exams PRIMARY KEY DEFAULT NEWID(),
+        Name NVARCHAR(200) NOT NULL,
+        ExamType NVARCHAR(50) NULL,
+        AcademicYearId UNIQUEIDENTIFIER NULL CONSTRAINT FK_Exams_AcademicYears FOREIGN KEY REFERENCES dbo.AcademicYears(Id),
+        TermId UNIQUEIDENTIFIER NULL CONSTRAINT FK_Exams_Terms FOREIGN KEY REFERENCES dbo.Terms(Id),
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Exams_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Exams_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.ExamSchedules', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.ExamSchedules
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_ExamSchedules PRIMARY KEY DEFAULT NEWID(),
+        ExamId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_ExamSchedules_Exams FOREIGN KEY REFERENCES dbo.Exams(Id),
+        SubjectId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_ExamSchedules_Subjects FOREIGN KEY REFERENCES dbo.Subjects(Id),
+        ClassId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_ExamSchedules_Classes FOREIGN KEY REFERENCES dbo.Classes(Id),
+        ExamDate DATE NOT NULL,
+        StartTime TIME(7) NULL,
+        EndTime TIME(7) NULL,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_ExamSchedules_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_ExamSchedules_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.Marks', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Marks
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Marks PRIMARY KEY DEFAULT NEWID(),
+        StudentId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_Marks_Students FOREIGN KEY REFERENCES dbo.Students(Id),
+        ExamId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_Marks_Exams FOREIGN KEY REFERENCES dbo.Exams(Id),
+        SubjectId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_Marks_Subjects FOREIGN KEY REFERENCES dbo.Subjects(Id),
+        ObtainedMarks DECIMAL(6,2) NOT NULL DEFAULT 0,
+        MaxMarks DECIMAL(6,2) NOT NULL DEFAULT 0,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Marks_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Marks_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.Grades', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Grades
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Grades PRIMARY KEY DEFAULT NEWID(),
+        Name NVARCHAR(50) NOT NULL,
+        MinPercentage DECIMAL(5,2) NOT NULL,
+        MaxPercentage DECIMAL(5,2) NOT NULL,
+        Description NVARCHAR(200) NULL,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Grades_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Grades_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.ReportCards', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.ReportCards
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_ReportCards PRIMARY KEY DEFAULT NEWID(),
+        StudentId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_ReportCards_Students FOREIGN KEY REFERENCES dbo.Students(Id),
+        AcademicYearId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_ReportCards_AcademicYears FOREIGN KEY REFERENCES dbo.AcademicYears(Id),
+        TermId UNIQUEIDENTIFIER NULL CONSTRAINT FK_ReportCards_Terms FOREIGN KEY REFERENCES dbo.Terms(Id),
+        GradeId UNIQUEIDENTIFIER NULL CONSTRAINT FK_ReportCards_Grades FOREIGN KEY REFERENCES dbo.Grades(Id),
+        OverallPercentage DECIMAL(5,2) NULL,
+        Remarks NVARCHAR(500) NULL,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_ReportCards_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_ReportCards_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+-- Infrastructure / Operations Tables
+IF OBJECT_ID(N'dbo.Buildings', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Buildings
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Buildings PRIMARY KEY DEFAULT NEWID(),
+        Name NVARCHAR(200) NOT NULL,
+        Code NVARCHAR(50) NULL,
+        Address NVARCHAR(500) NULL,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Buildings_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Buildings_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.Rooms', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Rooms
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Rooms PRIMARY KEY DEFAULT NEWID(),
+        BuildingId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_Rooms_Buildings FOREIGN KEY REFERENCES dbo.Buildings(Id),
+        Name NVARCHAR(100) NOT NULL,
+        RoomNumber NVARCHAR(50) NULL,
+        Capacity INT NOT NULL DEFAULT 40,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Rooms_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Rooms_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.Periods', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Periods
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Periods PRIMARY KEY DEFAULT NEWID(),
+        Name NVARCHAR(100) NOT NULL,
+        StartTime TIME(7) NOT NULL,
+        EndTime TIME(7) NOT NULL,
+        SequenceNo INT NOT NULL,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Periods_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Periods_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.Timetables', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Timetables
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Timetables PRIMARY KEY DEFAULT NEWID(),
+        ClassId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_Timetables_Classes FOREIGN KEY REFERENCES dbo.Classes(Id),
+        SectionId UNIQUEIDENTIFIER NULL CONSTRAINT FK_Timetables_Sections FOREIGN KEY REFERENCES dbo.Sections(Id),
+        SubjectId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_Timetables_Subjects FOREIGN KEY REFERENCES dbo.Subjects(Id),
+        TeacherId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_Timetables_Teachers FOREIGN KEY REFERENCES dbo.Teachers(Id),
+        PeriodId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_Timetables_Periods FOREIGN KEY REFERENCES dbo.Periods(Id),
+        DayOfWeek INT NOT NULL,
+        RoomId UNIQUEIDENTIFIER NULL CONSTRAINT FK_Timetables_Rooms FOREIGN KEY REFERENCES dbo.Rooms(Id),
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Timetables_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Timetables_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+-- Transport Tables
+IF OBJECT_ID(N'dbo.Drivers', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Drivers
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Drivers PRIMARY KEY DEFAULT NEWID(),
+        UserId UNIQUEIDENTIFIER NULL CONSTRAINT FK_Drivers_Users FOREIGN KEY REFERENCES dbo.Users(Id),
+        LicenseNumber NVARCHAR(100) NOT NULL,
+        Phone NVARCHAR(30) NULL,
+        Address NVARCHAR(500) NULL,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Drivers_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Drivers_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.Buses', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Buses
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Buses PRIMARY KEY DEFAULT NEWID(),
+        BusNumber NVARCHAR(50) NOT NULL,
+        DriverId UNIQUEIDENTIFIER NULL CONSTRAINT FK_Buses_Drivers FOREIGN KEY REFERENCES dbo.Drivers(Id),
+        Capacity INT NOT NULL DEFAULT 50,
+        RegistrationNumber NVARCHAR(50) NULL,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Buses_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Buses_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.Routes', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Routes
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Routes PRIMARY KEY DEFAULT NEWID(),
+        Name NVARCHAR(200) NOT NULL,
+        Description NVARCHAR(500) NULL,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Routes_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Routes_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.Stops', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Stops
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Stops PRIMARY KEY DEFAULT NEWID(),
+        RouteId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_Stops_Routes FOREIGN KEY REFERENCES dbo.Routes(Id),
+        Name NVARCHAR(200) NOT NULL,
+        SequenceNo INT NOT NULL,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Stops_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Stops_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.StudentTransport', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.StudentTransport
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_StudentTransport PRIMARY KEY DEFAULT NEWID(),
+        StudentId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_StudentTransport_Students FOREIGN KEY REFERENCES dbo.Students(Id),
+        BusId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_StudentTransport_Buses FOREIGN KEY REFERENCES dbo.Buses(Id),
+        RouteId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_StudentTransport_Routes FOREIGN KEY REFERENCES dbo.Routes(Id),
+        StopId UNIQUEIDENTIFIER NULL CONSTRAINT FK_StudentTransport_Stops FOREIGN KEY REFERENCES dbo.Stops(Id),
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_StudentTransport_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_StudentTransport_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+-- HR Tables
+IF OBJECT_ID(N'dbo.Employees', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Employees
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Employees PRIMARY KEY DEFAULT NEWID(),
+        UserId UNIQUEIDENTIFIER NULL CONSTRAINT FK_Employees_Users FOREIGN KEY REFERENCES dbo.Users(Id),
+        EmployeeNumber NVARCHAR(50) NOT NULL,
+        DepartmentId UNIQUEIDENTIFIER NULL CONSTRAINT FK_Employees_Departments FOREIGN KEY REFERENCES dbo.Departments(Id),
+        Designation NVARCHAR(100) NULL,
+        JoiningDate DATE NULL,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Employees_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Employees_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.Payroll', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Payroll
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Payroll PRIMARY KEY DEFAULT NEWID(),
+        EmployeeId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_Payroll_Employees FOREIGN KEY REFERENCES dbo.Employees(Id),
+        PayPeriodStart DATE NOT NULL,
+        PayPeriodEnd DATE NOT NULL,
+        BasicSalary DECIMAL(12,2) NOT NULL DEFAULT 0,
+        Allowances DECIMAL(12,2) NOT NULL DEFAULT 0,
+        Deductions DECIMAL(12,2) NOT NULL DEFAULT 0,
+        NetSalary DECIMAL(12,2) NOT NULL DEFAULT 0,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Payroll_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Payroll_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.LeaveRequests', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.LeaveRequests
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_LeaveRequests PRIMARY KEY DEFAULT NEWID(),
+        EmployeeId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_LeaveRequests_Employees FOREIGN KEY REFERENCES dbo.Employees(Id),
+        LeaveType NVARCHAR(100) NOT NULL,
+        StartDate DATE NOT NULL,
+        EndDate DATE NOT NULL,
+        Status NVARCHAR(50) NOT NULL DEFAULT 'Pending',
+        Remarks NVARCHAR(500) NULL,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_LeaveRequests_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_LeaveRequests_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+-- Communication and Operations Tables
+IF OBJECT_ID(N'dbo.Notifications', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Notifications
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Notifications PRIMARY KEY DEFAULT NEWID(),
+        UserId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_Notifications_Users FOREIGN KEY REFERENCES dbo.Users(Id),
+        Subject NVARCHAR(200) NOT NULL,
+        Message NVARCHAR(MAX) NOT NULL,
+        IsRead BIT NOT NULL DEFAULT 0,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Notifications_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Notifications_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.Messages', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Messages
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Messages PRIMARY KEY DEFAULT NEWID(),
+        SenderUserId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_Messages_SenderUsers FOREIGN KEY REFERENCES dbo.Users(Id),
+        RecipientUserId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_Messages_RecipientUsers FOREIGN KEY REFERENCES dbo.Users(Id),
+        Subject NVARCHAR(200) NOT NULL,
+        Body NVARCHAR(MAX) NOT NULL,
+        SentDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        IsRead BIT NOT NULL DEFAULT 0,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Messages_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Messages_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.Announcements', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Announcements
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Announcements PRIMARY KEY DEFAULT NEWID(),
+        Title NVARCHAR(200) NOT NULL,
+        Body NVARCHAR(MAX) NOT NULL,
+        PostedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Announcements_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Announcements_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+-- Medical and Audit Tables
+IF OBJECT_ID(N'dbo.MedicalRecords', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.MedicalRecords
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_MedicalRecords PRIMARY KEY DEFAULT NEWID(),
+        StudentId UNIQUEIDENTIFIER NULL CONSTRAINT FK_MedicalRecords_Students FOREIGN KEY REFERENCES dbo.Students(Id),
+        EmployeeId UNIQUEIDENTIFIER NULL CONSTRAINT FK_MedicalRecords_Employees FOREIGN KEY REFERENCES dbo.Employees(Id),
+        RecordType NVARCHAR(100) NOT NULL,
+        Description NVARCHAR(MAX) NULL,
+        VisitDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_MedicalRecords_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_MedicalRecords_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.VisitorLogs', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.VisitorLogs
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_VisitorLogs PRIMARY KEY DEFAULT NEWID(),
+        VisitorName NVARCHAR(200) NOT NULL,
+        Purpose NVARCHAR(500) NULL,
+        VisitDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        EmployeeId UNIQUEIDENTIFIER NULL CONSTRAINT FK_VisitorLogs_Employees FOREIGN KEY REFERENCES dbo.Employees(Id),
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_VisitorLogs_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_VisitorLogs_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.AuditLogs', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.AuditLogs
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_AuditLogs PRIMARY KEY DEFAULT NEWID(),
+        EntityName NVARCHAR(200) NOT NULL,
+        EntityId UNIQUEIDENTIFIER NOT NULL,
+        Action NVARCHAR(50) NOT NULL,
+        UserId UNIQUEIDENTIFIER NULL CONSTRAINT FK_AuditLogs_Users FOREIGN KEY REFERENCES dbo.Users(Id),
+        ChangeDetails NVARCHAR(MAX) NULL,
+        ActionDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_AuditLogs_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_AuditLogs_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.Settings', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Settings
+    (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Settings PRIMARY KEY DEFAULT NEWID(),
+        KeyName NVARCHAR(200) NOT NULL,
+        Value NVARCHAR(MAX) NULL,
+        Category NVARCHAR(100) NULL,
+        CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSDATETIME(),
+        UpdatedDate DATETIME2(7) NULL,
+        CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Settings_CreatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Settings_UpdatedBy FOREIGN KEY REFERENCES dbo.Users(Id),
+        IsDeleted BIT NOT NULL DEFAULT 0,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+END;
+GO
+
+-- Indexes
+CREATE INDEX IX_Roles_IsActive_IsDeleted ON dbo.Roles(IsActive, IsDeleted);
+CREATE INDEX IX_Permissions_IsActive_IsDeleted ON dbo.Permissions(IsActive, IsDeleted);
+CREATE INDEX IX_RolePermissions_RoleId ON dbo.RolePermissions(RoleId);
+CREATE INDEX IX_Users_RoleId ON dbo.Users(RoleId);
+CREATE INDEX IX_Users_Email ON dbo.Users(Email);
+CREATE INDEX IX_Departments_Code ON dbo.Departments(Code);
+CREATE INDEX IX_AcademicYears_IsCurrent ON dbo.AcademicYears(IsCurrent);
+CREATE INDEX IX_Terms_AcademicYearId ON dbo.Terms(AcademicYearId);
+CREATE INDEX IX_Classes_DepartmentId ON dbo.Classes(DepartmentId);
+CREATE INDEX IX_Sections_ClassId ON dbo.Sections(ClassId);
+CREATE INDEX IX_Subjects_Code ON dbo.Subjects(Code);
+CREATE INDEX IX_Parents_UserId ON dbo.Parents(UserId);
+CREATE INDEX IX_Teachers_UserId ON dbo.Teachers(UserId);
+CREATE INDEX IX_Students_UserId ON dbo.Students(UserId);
+CREATE INDEX IX_Students_ClassId ON dbo.Students(ClassId);
+CREATE INDEX IX_TeacherSubjects_TeacherId ON dbo.TeacherSubjects(TeacherId);
+CREATE INDEX IX_TeacherClasses_TeacherId ON dbo.TeacherClasses(TeacherId);
+CREATE INDEX IX_StudentClasses_StudentId ON dbo.StudentClasses(StudentId);
+CREATE INDEX IX_Attendance_StudentId ON dbo.Attendance(StudentId);
+CREATE INDEX IX_Attendance_AttendanceDate ON dbo.Attendance(AttendanceDate);
+CREATE INDEX IX_FeeStructures_ClassId ON dbo.FeeStructures(ClassId);
+CREATE INDEX IX_StudentFees_StudentId ON dbo.StudentFees(StudentId);
+CREATE INDEX IX_FeePayments_StudentFeeId ON dbo.FeePayments(StudentFeeId);
+CREATE INDEX IX_Books_ISBN ON dbo.Books(ISBN);
+CREATE INDEX IX_BookIssues_StudentId ON dbo.BookIssues(StudentId);
+CREATE INDEX IX_ExamSchedules_ExamId ON dbo.ExamSchedules(ExamId);
+CREATE INDEX IX_Marks_StudentId ON dbo.Marks(StudentId);
+CREATE INDEX IX_ReportCards_StudentId ON dbo.ReportCards(StudentId);
+CREATE INDEX IX_Rooms_BuildingId ON dbo.Rooms(BuildingId);
+CREATE INDEX IX_Timetables_ClassId ON dbo.Timetables(ClassId);
+CREATE INDEX IX_Buses_DriverId ON dbo.Buses(DriverId);
+CREATE INDEX IX_Stops_RouteId ON dbo.Stops(RouteId);
+CREATE INDEX IX_StudentTransport_StudentId ON dbo.StudentTransport(StudentId);
+CREATE INDEX IX_Employees_DepartmentId ON dbo.Employees(DepartmentId);
+CREATE INDEX IX_LeaveRequests_EmployeeId ON dbo.LeaveRequests(EmployeeId);
+CREATE INDEX IX_Notifications_UserId ON dbo.Notifications(UserId);
+CREATE INDEX IX_Messages_SenderUserId ON dbo.Messages(SenderUserId);
+CREATE INDEX IX_Messages_RecipientUserId ON dbo.Messages(RecipientUserId);
+CREATE INDEX IX_AuditLogs_EntityName ON dbo.AuditLogs(EntityName);
+CREATE INDEX IX_Settings_KeyName ON dbo.Settings(KeyName);
+GO

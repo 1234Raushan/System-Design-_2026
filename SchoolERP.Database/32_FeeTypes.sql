@@ -1,0 +1,6 @@
+CREATE TABLE FeeTypes
+(
+    FeeTypeId INT IDENTITY PRIMARY KEY,
+    FeeName NVARCHAR(100),
+    Amount DECIMAL(18,2)
+);

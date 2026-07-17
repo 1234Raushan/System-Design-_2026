@@ -1,20 +1,23 @@
-If we are going to analysis the basic to high-level requirements of any Architecture then first try 
-to understand the problem.
-In any school there are some basic requirements
-1. Students comes 1st time
-2. Asking for Admission Fee and then Taking Admission
-3. Uniform needs
-4. There will be need of Books
-5.  needs of Class teachers
-6.  needs of Classes
-7.  Fees
-8.  Attendance
-9.  Report & Dashboard
-13. Parents
-14. Principal
-15. Vice-Principal
-16. Nurse
-17. Librarian
-18. Transport Manager
-19. HR
-20. Security
+1. Problem Statement
+Before designing the architecture of any software system, the first step is to understand the business problem and gather 
+the functional requirements.
+For a School Management System, the objective is to manage the complete lifecycle of students, teachers, staff, academics,
+ and administrative operations through a centralized system.
+
+2. Core Business Requirements
+The following are the basic functional requirements of a School Management System:
+Student Admission
+Admission Fee Management
+Student Registration
+Class Assignment
+Teacher Assignment
+Books & Library Management
+Uniform Management
+Fee Management
+Student Attendance
+Teacher Attendance
+Timetable & Classes
+Examination & Results
+Reports & Dashboard
+Parent Management
+Communication & Notifications

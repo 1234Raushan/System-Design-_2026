@@ -1,5 +1,73 @@
-Admin 
- -add the students
- -update the students
- -Remove the students
- -Fetch the students
+Actor: Admin
+
+Student Module
+--------------
+• Add Student
+• Update Student
+• Delete Student
+• View Student Details
+• View All Students
+• Search Students
+• Assign Student to Class
+• Generate Student ID
+
+Teacher Module
+--------------
+• Add Teacher
+• Update Teacher
+• Delete Teacher
+• View Teacher Details
+• View All Teachers
+• Assign Teacher to Class
+• Assign Subject to Teacher
+
+Class Management Module
+-----------------------
+• Create Class
+• Update Class
+• Delete Class
+• View Class Details
+• View All Classes
+• Assign Students to Class
+• Assign Teachers to Class
+
+Attendance Module
+-----------------
+• Mark Student Attendance
+• Update Attendance
+• View Daily Attendance
+• View Monthly Attendance
+
+Fee Management Module
+---------------------
+• Create Fee Structure
+• Generate Student Fee
+• Record Fee Payment
+• View Fee History
+• Generate Fee Reports
+
+Library Module
+--------------
+• Add Book
+• Update Book
+• Delete Book
+• Issue Book
+• Return Book
+• View Available Books
+
+Reports Module
+--------------
+• View Dashboard
+• Generate Attendance Report
+• Generate Fee Report
+• Generate Student Report
+
+
+| Actor | Module     | Use Cases                                  |
+| ----- | ---------- | ------------------------------------------ |
+| Admin | Student    | Add, Update, Delete, View, Search          |
+| Admin | Teacher    | Add, Update, Delete, View, Assign Class    |
+| Admin | Class      | Create, Update, Delete, Assign Students    |
+| Admin | Attendance | Mark, Update, View                         |
+| Admin | Fee        | Generate Fee, Record Payment, View Reports |
+| Admin | Library    | Add Book, Issue Book, Return Book          |

@@ -1,17 +1,31 @@
-When student comes
-|
-for Admission
-|
-Assigned the Class
-|
-Assigned the teachers
-| 
-Provides Books (Library access)
-|
-provides Uniform & School Cards
-|
-Rules & Regulations
-|
-If they want Transportation then we can provide 
-|
-Then Fee Genrated
+Student Visits School
+        │
+        ▼
+Admission Inquiry
+        │
+        ▼
+Admission Registration
+        │
+        ▼
+Admission Fee Payment
+        │
+        ▼
+Student Profile Created
+        │
+        ▼
+Class Assigned
+        │
+        ▼
+Teachers Assigned
+        │
+        ▼
+Books & Uniform Issued
+        │
+        ▼
+Daily Attendance
+        │
+        ▼
+Classes & Exams
+        │
+        ▼
+Reports & Progress Tracking
