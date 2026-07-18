@@ -6,6 +6,7 @@ using SchoolERP.Application.Features.Students.Commands.DeleteStudent;
 using SchoolERP.Application.Features.Students.Commands.UpdateStudent;
 using SchoolERP.Application.Features.Students.Queries.GetStudentById;
 using SchoolERP.Application.Features.Students.Queries.GetStudents;
+using SchoolERP.Application.Features.Classes.Commands.UpdateClass;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace SchoolERP.Api.Controllers

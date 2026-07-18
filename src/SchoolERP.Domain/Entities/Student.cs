@@ -28,11 +28,13 @@ namespace SchoolERP.Domain.Entities
         public string? Address { get; private set; }
 
         public DateTime AdmissionDate { get; private set; }
+        public Class_A? Class_A { get; private set; }
 
         // Temporary (FKs will be configured later)
         public int? ClassId { get; private set; }
 
         public int? SectionId { get; private set; }
+        public Section? Section { get; private set; }
 
         // EF Core
         private Student()

@@ -22,11 +22,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Students\Validators\" />
+    <Folder Include="Features\Sections\Commands\CreateSection\" />
+    <Folder Include="Features\Sections\Commands\DeleteSection\" />
+    <Folder Include="Features\Sections\Commands\UpdateSection\" />
+    <Folder Include="Features\Sections\Queries\GetSectionById\" />
+    <Folder Include="Features\Sections\Queries\GetSection\" />
     <Folder Include="Features\Students\Mappings\" />
-    <Folder Include="Features\Users\Handlers\" />
-    <Folder Include="Features\Users\Responses\" />
-    <Folder Include="Features\Users\Validators\" />
     <Folder Include="Handlers\" />
     <Folder Include="Queries\" />
   </ItemGroup>

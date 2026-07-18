@@ -15,6 +15,8 @@ namespace SchoolERP.Application.Common.Interfaces
         DbSet<Permission> Permissions { get; }
         DbSet<RolePermission> RolePermissions { get; }
         DbSet<Student> Students { get; }
+        DbSet<Class_A> classes { get; }
+        DbSet<Section> Sections { get; }
         Task<int> SaveChangesAsync(
             CancellationToken cancellationToken);
     }
