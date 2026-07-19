@@ -8,7 +8,9 @@ public sealed class Section : BaseAuditableEntity
 
     public int ClassId { get; private set; }
 
-    public Class_A Class_A { get; private set; } = null!;
+    public Class_A Class { get; private set; } = null!;
+
+    
 
     public ICollection<Student> Students { get; private set; }
         = new List<Student>();
@@ -21,12 +23,13 @@ public sealed class Section : BaseAuditableEntity
         string sectionName,
         int classId)
     {
-        Update(sectionName, classId);
+        Update(sectionName, classId, true);
     }
 
     public void Update(
         string sectionName,
-        int classId)
+        int classId,
+        bool isActive)
     {
         if (string.IsNullOrWhiteSpace(sectionName))
             throw new ArgumentException("Section name is required.");

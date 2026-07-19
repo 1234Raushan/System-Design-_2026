@@ -22,11 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Sections\Commands\CreateSection\" />
-    <Folder Include="Features\Sections\Commands\DeleteSection\" />
-    <Folder Include="Features\Sections\Commands\UpdateSection\" />
-    <Folder Include="Features\Sections\Queries\GetSectionById\" />
-    <Folder Include="Features\Sections\Queries\GetSection\" />
     <Folder Include="Features\Students\Mappings\" />
     <Folder Include="Handlers\" />
     <Folder Include="Queries\" />
