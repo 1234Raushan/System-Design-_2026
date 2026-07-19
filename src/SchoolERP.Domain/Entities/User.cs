@@ -26,6 +26,7 @@ namespace SchoolERP.Domain.Entities
         public bool PhoneNumberConfirmed { get; private set; }
 
         public DateTime? LastLoginDate { get; private set; }
+        public Teacher? Teacher { get; private set; }
         public int RoleId { get; private set; }
 
         // Navigation Property

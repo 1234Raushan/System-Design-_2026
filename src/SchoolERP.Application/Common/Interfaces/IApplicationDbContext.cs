@@ -17,6 +17,9 @@ namespace SchoolERP.Application.Common.Interfaces
         DbSet<Student> Students { get; }
         DbSet<Class_A> classes { get; }
         DbSet<Section> Sections { get; }
+        DbSet<Subject> Subjects { get; }
+        DbSet<Teacher> Teachers { get; }
+        DbSet<TeacherSubject> TeacherSubjects { get; }
         Task<int> SaveChangesAsync(
             CancellationToken cancellationToken);
     }

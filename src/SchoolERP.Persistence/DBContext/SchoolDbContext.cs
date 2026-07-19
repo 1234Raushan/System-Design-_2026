@@ -25,6 +25,9 @@ namespace SchoolERP.Persistence.DBContext
         public DbSet<Student> Students => Set<Student>();
         public DbSet<Class_A> classes => Set<Class_A>();
         public DbSet<Section> Sections => Set<Section>();
+        public DbSet<Subject> Subjects => Set<Subject>();
+        public DbSet<Teacher> Teachers => Set<Teacher>();
+        public DbSet<TeacherSubject> TeacherSubjects => Set<TeacherSubject>();
 
         #endregion
 

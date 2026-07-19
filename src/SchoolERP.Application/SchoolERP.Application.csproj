@@ -7,6 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Features\Transport\**" />
+    <Compile Remove="Features\HR\**" />
+    <EmbeddedResource Remove="Features\Transport\**" />
+    <EmbeddedResource Remove="Features\HR\**" />
+    <None Remove="Features\Transport\**" />
+    <None Remove="Features\HR\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="FluentValidation" Version="11.1.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.1.0" />
@@ -22,7 +31,43 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Students\Mappings\" />
+    <Folder Include="Features\Attendance\Commands\Create\" />
+    <Folder Include="Features\Attendance\Commands\Delete\" />
+    <Folder Include="Features\Attendance\Commands\Update\" />
+    <Folder Include="Features\Examination\Commands\Create\" />
+    <Folder Include="Features\Examination\Commands\Delete\" />
+    <Folder Include="Features\Examination\Commands\Update\" />
+    <Folder Include="Features\Examination\DTOs\" />
+    <Folder Include="Features\Examination\Queries\" />
+    <Folder Include="Features\Fees\Commands\Create\" />
+    <Folder Include="Features\Fees\Commands\Delete\" />
+    <Folder Include="Features\Fees\Commands\Update\" />
+    <Folder Include="Features\HR\Commands\Create\" />
+    <Folder Include="Features\HR\Commands\Delete\" />
+    <Folder Include="Features\HR\Commands\Update\" />
+    <Folder Include="Features\Library\Commands\Create\" />
+    <Folder Include="Features\Library\Commands\Delete\" />
+    <Folder Include="Features\Library\Commands\Update\" />
+    <Folder Include="Features\Payroll\Commands\Create\" />
+    <Folder Include="Features\Payroll\Commands\Delete\" />
+    <Folder Include="Features\Payroll\Commands\Update\" />
+    <Folder Include="Features\Payroll\DTOs\" />
+    <Folder Include="Features\Payroll\Queries\" />
+    <Folder Include="Features\Library\DTOs\" />
+    <Folder Include="Features\Library\Queries\" />
+    <Folder Include="Features\TeacherSubjects\DTOs\" />
+    <Folder Include="Features\TeacherSubjects\Queries\" />
+    <Folder Include="Features\Transport\Commands\Create\" />
+    <Folder Include="Features\Transport\Commands\Delete\" />
+    <Folder Include="Features\Transport\Commands\Update\" />
+    <Folder Include="Features\Transport\DTOs\" />
+    <Folder Include="Features\Transport\Queries\" />
+    <Folder Include="Features\Attendance\DTOs\" />
+    <Folder Include="Features\Attendance\Queries\" />
+    <Folder Include="Features\Fees\DTOs\" />
+    <Folder Include="Features\Fees\Queries\" />
+    <Folder Include="Features\HR\DTOs\" />
+    <Folder Include="Features\HR\Queries\" />
     <Folder Include="Handlers\" />
     <Folder Include="Queries\" />
   </ItemGroup>
