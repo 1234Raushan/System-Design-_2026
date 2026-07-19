@@ -55,8 +55,6 @@
     <Folder Include="Features\Payroll\Queries\" />
     <Folder Include="Features\Library\DTOs\" />
     <Folder Include="Features\Library\Queries\" />
-    <Folder Include="Features\TeacherSubjects\DTOs\" />
-    <Folder Include="Features\TeacherSubjects\Queries\" />
     <Folder Include="Features\Transport\Commands\Create\" />
     <Folder Include="Features\Transport\Commands\Delete\" />
     <Folder Include="Features\Transport\Commands\Update\" />

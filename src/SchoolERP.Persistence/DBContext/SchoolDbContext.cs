@@ -28,7 +28,8 @@ namespace SchoolERP.Persistence.DBContext
         public DbSet<Subject> Subjects => Set<Subject>();
         public DbSet<Teacher> Teachers => Set<Teacher>();
         public DbSet<TeacherSubject> TeacherSubjects => Set<TeacherSubject>();
-
+        public DbSet<TeacherClass> TeacherClasses => Set<TeacherClass>();
+        public DbSet<AcademicSession> AcademicSessions => Set<AcademicSession>();
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

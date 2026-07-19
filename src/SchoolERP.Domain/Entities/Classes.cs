@@ -18,6 +18,9 @@ public sealed class Class_A : BaseAuditableEntity
     public ICollection<Section> Sections { get; private set; }
         = new List<Section>();
 
+    public ICollection<TeacherClass> TeacherClasses { get; private set; }
+        = new List<TeacherClass>();
+
     private Class_A()
     {
     }

@@ -10,7 +10,6 @@ public sealed class Teacher : BaseAuditableEntity
     public string LastName { get; private set; } = string.Empty;
     public string Email { get; private set; } = string.Empty;
     public string? PhoneNumber { get; private set; }
-
     public string? Gender { get; private set; }
 
     public DateTime? DateOfBirth { get; private set; }
@@ -28,6 +27,9 @@ public sealed class Teacher : BaseAuditableEntity
 
     public ICollection<TeacherSubject> TeacherSubjects { get; private set; }
     = new List<TeacherSubject>();
+
+    public ICollection<TeacherClass> TeacherClasses { get; private set; }
+    = new List<TeacherClass>();
 
     private Teacher()
     {
