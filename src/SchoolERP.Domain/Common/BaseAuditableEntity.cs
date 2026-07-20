@@ -33,6 +33,7 @@ namespace SchoolERP.Domain.Common
         public void SoftDelete()
         {
             IsDeleted = true;
+            IsActive = false;
             UpdatedDate = DateTime.UtcNow;
         }
 
