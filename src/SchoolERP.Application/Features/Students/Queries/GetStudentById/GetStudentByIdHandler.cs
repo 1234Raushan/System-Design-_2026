@@ -37,7 +37,6 @@ namespace SchoolERP.Application.Features.Students.Queries.GetStudentById
             {
                 Id = student.Id,
                 AdmissionNumber = student.AdmissionNumber,
-                RollNumber = student.RollNumber,
                 FirstName = student.FirstName,
                 LastName = student.LastName,
                 DateOfBirth = student.DateOfBirth,
@@ -45,9 +44,6 @@ namespace SchoolERP.Application.Features.Students.Queries.GetStudentById
                 Email = student.Email,
                 PhoneNumber = student.PhoneNumber,
                 Address = student.Address,
-                AdmissionDate = student.AdmissionDate,
-                ClassId = student.ClassId,
-                SectionId = student.SectionId,
                 IsActive = student.IsActive
             };
         }

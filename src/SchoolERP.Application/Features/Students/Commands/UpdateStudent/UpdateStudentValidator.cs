@@ -19,10 +19,6 @@ namespace SchoolERP.Application.Features.Students.Commands.UpdateStudent
                 .NotEmpty()
                 .MaximumLength(50);
 
-            RuleFor(x => x.RollNumber)
-                .NotEmpty()
-                .MaximumLength(50);
-
             RuleFor(x => x.FirstName)
                 .NotEmpty()
                 .MaximumLength(100);

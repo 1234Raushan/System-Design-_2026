@@ -27,16 +27,6 @@ public sealed class CreateStudentHandler
             throw new InvalidOperationException(
                 "Admission number already exists.");
         }
-
-        // Duplicate Roll Number
-        if (await _context.Students.AnyAsync(
-            x => x.RollNumber == request.RollNumber,
-            cancellationToken))
-        {
-            throw new InvalidOperationException(
-                "Roll number already exists.");
-        }
-
         // Duplicate Email (optional)
         if (!string.IsNullOrWhiteSpace(request.Email))
         {
@@ -51,23 +41,15 @@ public sealed class CreateStudentHandler
 
         var student = new Student(
             request.AdmissionNumber,
-            request.RollNumber,
             request.FirstName,
             request.LastName,
             request.DateOfBirth,
             request.Gender,
-            request.AdmissionDate,
             request.Email,
             request.PhoneNumber,
             request.Address);
-
-        student.AssignClass(request.ClassId);
-        student.AssignSection(request.SectionId);
-
         _context.Students.Add(student);
-
         await _context.SaveChangesAsync(cancellationToken);
-
         return student.Id;
     }
 }

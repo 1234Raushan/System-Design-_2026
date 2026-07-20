@@ -55,6 +55,10 @@
     <Folder Include="Features\Payroll\Queries\" />
     <Folder Include="Features\Library\DTOs\" />
     <Folder Include="Features\Library\Queries\" />
+    <Folder Include="Features\StudentEnrollments\Commands\DeleteEnrollment\" />
+    <Folder Include="Features\StudentEnrollments\Commands\PromoteStudent\" />
+    <Folder Include="Features\StudentEnrollments\Queries\GetStudentEnrollmentHistory\" />
+    <Folder Include="Features\StudentEnrollments\Queries\GetEnrollments\" />
     <Folder Include="Features\Transport\Commands\Create\" />
     <Folder Include="Features\Transport\Commands\Delete\" />
     <Folder Include="Features\Transport\Commands\Update\" />

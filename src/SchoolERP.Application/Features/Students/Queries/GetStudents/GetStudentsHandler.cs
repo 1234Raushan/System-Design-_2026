@@ -41,8 +41,8 @@ namespace SchoolERP.Application.Features.Students.Queries.GetStudents
                 query = query.Where(x =>
                     x.FirstName.Contains(search) ||
                     x.LastName.Contains(search) ||
-                    x.AdmissionNumber.Contains(search) ||
-                    x.RollNumber.Contains(search));
+                    x.AdmissionNumber.Contains(search)
+                    );
             }
 
             var totalRecords = await query.CountAsync(cancellationToken);
@@ -74,7 +74,6 @@ namespace SchoolERP.Application.Features.Students.Queries.GetStudents
                 {
                     Id = x.Id,
                     AdmissionNumber = x.AdmissionNumber,
-                    RollNumber = x.RollNumber,
                     FirstName = x.FirstName,
                     LastName = x.LastName,
                     DateOfBirth = x.DateOfBirth,
@@ -82,9 +81,6 @@ namespace SchoolERP.Application.Features.Students.Queries.GetStudents
                     Email = x.Email,
                     PhoneNumber = x.PhoneNumber,
                     Address = x.Address,
-                    AdmissionDate = x.AdmissionDate,
-                    ClassId = x.ClassId,
-                    SectionId = x.SectionId,
                     IsActive = x.IsActive
                 })
                 .ToListAsync(cancellationToken);

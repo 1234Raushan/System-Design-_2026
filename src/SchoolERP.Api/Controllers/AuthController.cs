@@ -33,5 +33,3 @@ namespace SchoolERP.Api.Controllers
         }
     }
 }
-//"userName": "raushan",
-//  "password": "Test@123",

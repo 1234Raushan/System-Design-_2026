@@ -13,6 +13,8 @@ public sealed class AcademicSession : BaseAuditableEntity
     public bool IsCurrent { get; private set; }
 
     public string? Description { get; private set; }
+    public ICollection<StudentEnrollment> Enrollments { get; private set; }
+        = new List<StudentEnrollment>();
 
     private AcademicSession()
     {
@@ -52,5 +54,14 @@ public sealed class AcademicSession : BaseAuditableEntity
             Deactivate();
 
         MarkAsUpdated();
+    }
+    public void SetCurrent()
+    {
+        IsCurrent = true;
+    }
+
+    public void RemoveCurrent()
+    {
+        IsCurrent = false;
     }
 }

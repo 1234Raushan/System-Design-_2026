@@ -10,10 +10,10 @@ public sealed class Section : BaseAuditableEntity
 
     public Class_A Class { get; private set; } = null!;
 
-    
-
-    public ICollection<Student> Students { get; private set; }
-        = new List<Student>();
+    //public ICollection<Student> Students { get; private set; }
+    //    = new List<Student>();
+    public ICollection<StudentEnrollment> Enrollments { get; private set; }
+        = new List<StudentEnrollment>();
 
     private Section()
     {

@@ -16,10 +16,6 @@ namespace SchoolERP.Application.Features.Students.Commands.CreateStudent
                 .NotEmpty()
                 .MaximumLength(50);
 
-            RuleFor(x => x.RollNumber)
-                .NotEmpty()
-                .MaximumLength(50);
-
             RuleFor(x => x.FirstName)
                 .NotEmpty()
                 .MaximumLength(100);
@@ -34,9 +30,6 @@ namespace SchoolERP.Application.Features.Students.Commands.CreateStudent
 
             RuleFor(x => x.DateOfBirth)
                 .LessThan(DateTime.Today);
-
-            RuleFor(x => x.AdmissionDate)
-                .NotEmpty();
 
             RuleFor(x => x.Email)
                 .EmailAddress()

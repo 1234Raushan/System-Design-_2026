@@ -34,16 +34,6 @@ public sealed class UpdateStudentHandler
         {
             throw new InvalidOperationException("Admission number already exists.");
         }
-
-        // Duplicate Roll Number
-        if (await _context.Students.AnyAsync(
-            x => x.Id != request.Id &&
-                 x.RollNumber == request.RollNumber,
-            cancellationToken))
-        {
-            throw new InvalidOperationException("Roll number already exists.");
-        }
-
         // Duplicate Email
         if (!string.IsNullOrWhiteSpace(request.Email))
         {
@@ -55,22 +45,16 @@ public sealed class UpdateStudentHandler
                 throw new InvalidOperationException("Email already exists.");
             }
         }
-
             student.Update(
             request.AdmissionNumber,
-            request.RollNumber,
             request.FirstName,
             request.LastName,
             request.DateOfBirth,
             request.Gender,
-            request.AdmissionDate,
             request.Email,
             request.PhoneNumber,
             request.Address,
-            request.ClassId,
-            request.SectionId,
             request.IsActive);
-
         await _context.SaveChangesAsync(cancellationToken);
     }
 }

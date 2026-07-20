@@ -12,14 +12,17 @@ public sealed class Class_A : BaseAuditableEntity
     public string? Description { get; private set; }
 
     // Navigation
-    public ICollection<Student> Students { get; private set; }
-        = new List<Student>();
+    //public ICollection<Student> Students { get; private set; }
+    //    = new List<Student>();
 
     public ICollection<Section> Sections { get; private set; }
         = new List<Section>();
 
     public ICollection<TeacherClass> TeacherClasses { get; private set; }
         = new List<TeacherClass>();
+
+    public ICollection<StudentEnrollment> Enrollments { get; private set; }
+        = new List<StudentEnrollment>();
 
     private Class_A()
     {

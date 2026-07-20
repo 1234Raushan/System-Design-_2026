@@ -18,17 +18,6 @@ namespace SchoolERP.Persistence.EntityConfigurations
 
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.AdmissionNumber)
-                .HasMaxLength(50)
-                .IsRequired();
-
-            builder.HasIndex(x => x.AdmissionNumber)
-                .IsUnique();
-
-            builder.Property(x => x.RollNumber)
-                .HasMaxLength(50)
-                .IsRequired();
-
             builder.Property(x => x.FirstName)
                 .HasMaxLength(100)
                 .IsRequired();
@@ -51,9 +40,6 @@ namespace SchoolERP.Persistence.EntityConfigurations
                 .HasMaxLength(500);
 
             builder.Property(x => x.DateOfBirth)
-                .IsRequired();
-
-            builder.Property(x => x.AdmissionDate)
                 .IsRequired();
 
             builder.Property(x => x.IsActive)
