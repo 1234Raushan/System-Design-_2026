@@ -15,6 +15,9 @@ public sealed class Section : BaseAuditableEntity
     public ICollection<StudentEnrollment> Enrollments { get; private set; }
         = new List<StudentEnrollment>();
 
+    public ICollection<TeachingAssignment> TeachingAssignments { get; private set; }
+    = new List<TeachingAssignment>();
+
     private Section()
     {
     }

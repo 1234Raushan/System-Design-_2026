@@ -24,7 +24,9 @@ namespace SchoolERP.Application.Common.Interfaces
         DbSet<AcademicSession> AcademicSessions { get; }
         DbSet<StudentEnrollment> StudentEnrollments { get; }
         DbSet<AttendanceSession> AttendanceSessions { get; }
-        DbSet<StudentAttendance> StudentAttendances { get; }
+        DbSet<Student_Attendance> StudentAttendances { get; }
+        DbSet<TeachingAssignment> TeachingAssignments { get; }
+        DbSet<Timetable> Timetables { get; }
         Task<int> SaveChangesAsync(
             CancellationToken cancellationToken);
     }

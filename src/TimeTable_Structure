@@ -1,0 +1,105 @@
+Features
+│
+└── Timetables
+    │
+    ├── Commands
+    │   │
+    │   ├── CreateTimetable
+    │   │      ├── CreateTimetableCommand.cs
+    │   │      ├── CreateTimetableHandler.cs
+    │   │      └── CreateTimetableValidator.cs
+    │   │
+    │   ├── UpdateTimetable
+    │   │      ├── UpdateTimetableCommand.cs
+    │   │      ├── UpdateTimetableHandler.cs
+    │   │      └── UpdateTimetableValidator.cs
+    │   │
+    │   └── DeleteTimetable
+    │          ├── DeleteTimetableCommand.cs
+    │          ├── DeleteTimetableHandler.cs
+    │          └── DeleteTimetableValidator.cs
+    │
+    ├── Queries
+    │   │
+    │   ├── GetTimetableById
+    │   │      ├── GetTimetableByIdQuery.cs
+    │   │      └── GetTimetableByIdHandler.cs
+    │   │
+    │   └── GetTimetableList
+    │          ├── GetTimetableListQuery.cs
+    │          └── GetTimetableListHandler.cs
+    │
+    ├── DTOs
+    │      ├── CreateTimetableRequest.cs
+    │      ├── UpdateTimetableRequest.cs
+    │      ├── TimetableResponse.cs
+    │      └── TimetableMappingProfile.cs
+    │
+    └── TimetableController.cs
+*************************************************************
+    Persistence
+│
+├── Configurations
+│      └── TimetableConfiguration.cs
+│
+├── DbContext
+│
+└── Migrations
+
+Domain
+│
+└── Entities
+       └── Timetable.cs
+*************************************************************
+
+AcademicSession
+        │
+        └──────────────┐
+                       │
+TeacherClass           │
+        │              │
+        └──────┐       │
+               │       │
+TeacherSubject │       │
+               ▼       ▼
+             Timetable
+
+**************************API***********************************
+ api/Timetable
+
+POST
+
+GET
+
+GET/{id}
+
+PUT/{id}
+
+DELETE/{id}                  
+
+**************************Timetable Life Cycle***********************************
+Admin
+     │
+     ▼
+Create Academic Session
+     │
+     ▼
+Create Class
+     │
+     ▼
+Create Section
+     │
+     ▼
+Create Subject
+     │
+     ▼
+Create Teacher
+     │
+     ▼
+Assign Teacher → Class
+     │
+     ▼
+Assign Teacher → Subject
+     │
+     ▼
+Create Timetable

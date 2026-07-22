@@ -3,50 +3,37 @@ using SchoolERP.Domain.Enums;
 
 namespace SchoolERP.Domain.Entities;
 
-public sealed class StudentAttendance : BaseAuditableEntity
+public sealed class Student_Attendance : BaseAuditableEntity
 {
     public int AttendanceSessionId { get; private set; }
-    public int StudentId { get; private set; }
+    public int StudentEnrollmentId { get; private set; }
     public AttendanceStatus Status { get; private set; }
     public string? Remarks { get; private set; }
     // Navigation
-
-    public AttendanceSession AttendanceSession
-    {
-        get; private set;
-    } = null!;
-
-    public Student Student
-    {
-        get; private set;
-    } = null!;
-    private StudentAttendance()
+    public AttendanceSession AttendanceSession { get; private set; } = null!;
+    public StudentEnrollment StudentEnrollment { get; private set; } = null!;
+    private Student_Attendance()
     {
     }
-    public StudentAttendance(
+    public Student_Attendance(
         int attendanceSessionId,
-        int studentId,
+        int studentEnrollmentId,
         AttendanceStatus status,
         string? remarks)
     {
         AttendanceSessionId = attendanceSessionId;
-
-        StudentId = studentId;
-
+        StudentEnrollmentId = studentEnrollmentId;
         Status = status;
-
         Remarks = remarks;
-
         CreatedDate = DateTime.UtcNow;
     }
+
     public void Update(
         AttendanceStatus status,
         string? remarks)
     {
         Status = status;
-
         Remarks = remarks;
-
         MarkAsUpdated();
     }
 }

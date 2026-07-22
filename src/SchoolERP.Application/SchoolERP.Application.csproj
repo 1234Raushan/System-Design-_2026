@@ -31,9 +31,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Attendance\Commands\Create\" />
-    <Folder Include="Features\Attendance\Commands\Delete\" />
-    <Folder Include="Features\Attendance\Commands\Update\" />
     <Folder Include="Features\Examination\Commands\Create\" />
     <Folder Include="Features\Examination\Commands\Delete\" />
     <Folder Include="Features\Examination\Commands\Update\" />
@@ -62,8 +59,6 @@
     <Folder Include="Features\Transport\Commands\Update\" />
     <Folder Include="Features\Transport\DTOs\" />
     <Folder Include="Features\Transport\Queries\" />
-    <Folder Include="Features\Attendance\DTOs\" />
-    <Folder Include="Features\Attendance\Queries\" />
     <Folder Include="Features\Fees\DTOs\" />
     <Folder Include="Features\Fees\Queries\" />
     <Folder Include="Features\HR\DTOs\" />

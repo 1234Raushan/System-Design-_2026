@@ -30,6 +30,8 @@ public sealed class Teacher : BaseAuditableEntity
 
     public ICollection<TeacherClass> TeacherClasses { get; private set; }
     = new List<TeacherClass>();
+    public ICollection<TeachingAssignment> TeachingAssignments { get; private set; }
+    = new List<TeachingAssignment>();
 
     private Teacher()
     {

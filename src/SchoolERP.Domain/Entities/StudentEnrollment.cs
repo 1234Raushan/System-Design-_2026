@@ -30,6 +30,8 @@ public sealed class StudentEnrollment : BaseAuditableEntity
     public Class_A Class { get; private set; } = null!;
 
     public Section Section { get; private set; } = null!;
+    public ICollection<Student_Attendance> StudentAttendances { get; private set; }
+    = new List<Student_Attendance>();
 
     private StudentEnrollment()
     {

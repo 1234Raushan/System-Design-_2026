@@ -12,6 +12,8 @@ public sealed class Subject : BaseAuditableEntity
 
     public ICollection<TeacherSubject> TeacherSubjects { get; private set; }
     = new List<TeacherSubject>();
+    public ICollection<TeachingAssignment> TeachingAssignments { get; private set; }
+        = new List<TeachingAssignment>();
 
     private Subject()
     {

@@ -22,9 +22,9 @@ public sealed class AttendanceSession : BaseAuditableEntity
     public Section Section { get; private set; } = null!;
 
 
-    public ICollection<StudentAttendance> StudentAttendances
+    public ICollection<Student_Attendance> StudentAttendances
     { get; private set; }
-        = new List<StudentAttendance>();
+        = new List<Student_Attendance>();
 
 
     private AttendanceSession()

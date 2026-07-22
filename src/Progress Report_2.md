@@ -1,0 +1,193 @@
+Foundation (Users, Student, Teacher, Academic Master)   ✅ 100%
+
+TeachingAssignment                                      ✅ 100%
+
+Timetable                                                ✅ 100%
+
+Attendance                                               ⏳ 10-20% (Start)
+
+Exam                                                     ❌
+
+Marks                                                    ❌
+
+Fees                                                     ❌
+
+Library                                                  ❌
+
+Transport                                                ❌
+
+Report Card                                              ❌
+
+SchoolERP
+│
+├─────────────────────────────────────────────────────────────────────────────┐
+│                                                                             │
+│
+├── Authentication & Authorization
+│   │
+│   ├── Users
+│   ├── Roles
+│   ├── Permissions
+│   ├── RolePermissions
+│   ├── Refresh Tokens
+│   └── Login / JWT
+│
+├─────────────────────────────────────────────────────────────────────────────┐
+│
+├── Academic Management
+│   │
+│   ├── AcademicSession
+│   │
+│   ├── Class
+│   │
+│   ├── Section
+│   │
+│   ├── Subject
+│   │
+│   ├── Teacher
+│   │
+│   ├── TeacherSubject
+│   │
+│   ├── ClassTeacherMapping
+│   │
+│   └── TeachingAssignment
+│        │
+│        ├─────────────────────────────────────────────────────────────┐
+│        │                                                             │
+│        ├── Timetable
+│        │
+│        ├── Attendance
+│        │     │
+│        │     ├── AttendanceSession
+│        │     │
+│        │     ├── StudentAttendance
+│        │     │
+│        │     ├── Attendance Register
+│        │     │
+│        │     ├── Daily Attendance Report
+│        │     │
+│        │     ├── Monthly Attendance Report
+│        │     │
+│        │     └── Attendance Analytics
+│        │
+│        ├── Homework
+│        │
+│        ├── Assignment
+│        │
+│        ├── Lesson Plan
+│        │
+│        ├── Examination
+│        │     │
+│        │     ├── Exam
+│        │     │
+│        │     ├── Marks Entry
+│        │     │
+│        │     ├── Grade Calculation
+│        │     │
+│        │     ├── Result Processing
+│        │     │
+│        │     └── Report Card Generation
+│        │
+│        └── Teacher Dashboard
+│
+├─────────────────────────────────────────────────────────────────────────────┐
+│
+├── Student Management
+│   │
+│   ├── Student
+│   │
+│   ├── StudentEnrollment
+│   │
+│   ├───────────────────────────────────────────────────────────────┐
+│   │                                                               │
+│   ├── Attendance History
+│   │
+│   ├── Marks History
+│   │
+│   ├── Report Card
+│   │
+│   ├── Academic Progress
+│   │
+│   ├── Promotion History
+│   │
+│   └── Documents
+│
+├─────────────────────────────────────────────────────────────────────────────┐
+│
+├── Fees Management
+│   │
+│   ├── Fee Structure
+│   ├── Fee Category
+│   ├── Student Fee
+│   ├── Fee Collection
+│   ├── Payment
+│   ├── Receipt
+│   ├── Due Report
+│   └── Fee Dashboard
+│
+├─────────────────────────────────────────────────────────────────────────────┐
+│
+├── Library Management
+│   │
+│   ├── Book
+│   ├── Book Category
+│   ├── Author
+│   ├── Publisher
+│   ├── Book Issue
+│   ├── Book Return
+│   ├── Fine
+│   └── Library Report
+│
+├─────────────────────────────────────────────────────────────────────────────┐
+│
+├── Transport Management
+│   │
+│   ├── Vehicle
+│   ├── Route
+│   ├── Stop
+│   ├── Driver
+│   ├── Student Transport
+│   └── Transport Report
+│
+├─────────────────────────────────────────────────────────────────────────────┐
+│
+├── Human Resource
+│   │
+│   ├── Employee
+│   ├── Attendance
+│   ├── Leave
+│   ├── Payroll
+│   └── Salary
+│
+├─────────────────────────────────────────────────────────────────────────────┐
+│
+├── Inventory
+│   │
+│   ├── Assets
+│   ├── Stock
+│   ├── Purchase
+│   └── Vendors
+│
+├─────────────────────────────────────────────────────────────────────────────┐
+│
+├── Notification
+│   │
+│   ├── SMS
+│   ├── Email
+│   ├── Push Notification
+│   └── Announcement
+│
+├─────────────────────────────────────────────────────────────────────────────┐
+│
+├── Reports & Analytics
+│   │
+│   ├── Student Reports
+│   ├── Teacher Reports
+│   ├── Attendance Reports
+│   ├── Examination Reports
+│   ├── Fees Reports
+│   ├── Library Reports
+│   ├── Transport Reports
+│   └── Dashboard
+│
+└─────────────────────────────────────────────────────────────────────────────┘

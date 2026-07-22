@@ -27,16 +27,6 @@ public sealed class UpdateTeacherHandler
         if (teacher is null)
             throw new KeyNotFoundException("Teacher not found.");
 
-        var duplicateEmail = await _context.Teachers
-            .AnyAsync(
-                x => x.Id != request.Id &&
-                     x.Email == request.Email &&
-                     !x.IsDeleted,
-                cancellationToken);
-
-        if (duplicateEmail)
-            throw new InvalidOperationException("Email already exists.");
-
         teacher.Update(
             request.FirstName,
             request.LastName,
