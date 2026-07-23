@@ -2,9 +2,10 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SchoolERP.Application.Features.StudentAttendance.Commands.CreateAttendance;
-using SchoolERP.Application.Features.StudentAttendance.Commands.UpdateAttendance;
 using SchoolERP.Application.Features.StudentAttendance.Commands.DeleteAttendance;
+using SchoolERP.Application.Features.StudentAttendance.Commands.UpdateAttendance;
 using SchoolERP.Application.Features.StudentAttendance.Queries.GetAttendanceById;
+using SchoolERP.Application.Features.StudentAttendance.Queries.GetAttendanceList;
 namespace SchoolERP.Api.Controllers
 {
     [Route("api/[controller]")]
@@ -60,6 +61,16 @@ namespace SchoolERP.Api.Controllers
             var result = await _mediator.Send(
                 new GetStudentAttendanceByIdQuery(attendanceSessionId),
                 cancellationToken);
+
+            return Ok(result);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll(
+            [FromQuery] GetStudentAttendanceListQuery query,
+            CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(query, cancellationToken);
 
             return Ok(result);
         }

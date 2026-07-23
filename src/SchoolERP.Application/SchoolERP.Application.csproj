@@ -31,11 +31,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Examination\Commands\Create\" />
-    <Folder Include="Features\Examination\Commands\Delete\" />
-    <Folder Include="Features\Examination\Commands\Update\" />
-    <Folder Include="Features\Examination\DTOs\" />
-    <Folder Include="Features\Examination\Queries\" />
     <Folder Include="Features\Fees\Commands\Create\" />
     <Folder Include="Features\Fees\Commands\Delete\" />
     <Folder Include="Features\Fees\Commands\Update\" />

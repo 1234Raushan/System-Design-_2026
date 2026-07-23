@@ -24,6 +24,9 @@ public sealed class TeachingAssignment : BaseAuditableEntity
     public ICollection<Timetable> Timetables { get; private set; }
         = new List<Timetable>();
 
+    public ICollection<Exam> Exams { get; private set; }
+    = new List<Exam>();
+
     private TeachingAssignment()
     {
     }

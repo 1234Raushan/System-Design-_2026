@@ -35,6 +35,8 @@ namespace SchoolERP.Persistence.DBContext
         public DbSet<Student_Attendance> StudentAttendances => Set<Student_Attendance>();
         public DbSet<Timetable> Timetables => Set<Timetable>();
         public DbSet<TeachingAssignment> TeachingAssignments => Set<TeachingAssignment>();
+        public DbSet<Exam> Exams => Set<Exam>();
+        public DbSet<Mark> Marks => Set<Mark>();
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
