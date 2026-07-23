@@ -31,9 +31,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Fees\Commands\Create\" />
-    <Folder Include="Features\Fees\Commands\Delete\" />
-    <Folder Include="Features\Fees\Commands\Update\" />
+    <Folder Include="Features\Fees\Commands\DeleteFeeAssignment\" />
+    <Folder Include="Features\Fees\Commands\UpdateFeeAssignment\" />
     <Folder Include="Features\HR\Commands\Create\" />
     <Folder Include="Features\HR\Commands\Delete\" />
     <Folder Include="Features\HR\Commands\Update\" />

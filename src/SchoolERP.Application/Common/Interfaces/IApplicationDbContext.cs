@@ -29,6 +29,9 @@ namespace SchoolERP.Application.Common.Interfaces
         DbSet<Timetable> Timetables { get; }
         DbSet<Exam> Exams { get; }
         DbSet<Mark> Marks { get; }
+        DbSet<FeeAssignment> FeeAssignments { get; }
+        DbSet<FeePayment> FeePayments { get; }
+        DbSet<Receipt> Receipts { get; }
         Task<int> SaveChangesAsync(
             CancellationToken cancellationToken);
     }

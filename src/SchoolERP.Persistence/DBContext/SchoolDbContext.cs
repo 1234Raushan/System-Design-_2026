@@ -37,6 +37,9 @@ namespace SchoolERP.Persistence.DBContext
         public DbSet<TeachingAssignment> TeachingAssignments => Set<TeachingAssignment>();
         public DbSet<Exam> Exams => Set<Exam>();
         public DbSet<Mark> Marks => Set<Mark>();
+        public DbSet<FeeAssignment> FeeAssignments => Set<FeeAssignment>();
+        public DbSet<FeePayment> FeePayments => Set<FeePayment>();
+        public DbSet<Receipt> Receipts => Set<Receipt>();
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

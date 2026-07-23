@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SchoolERP.Domain.Entities
+namespace SchoolERP.Application.Features.Fees.Commands.UpdateFeePayment
 {
-    internal class Fees
+    internal class UpdateFeePaymentCommand
     {
     }
 }
