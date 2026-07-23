@@ -9,8 +9,7 @@ public sealed class GetStudentAttendanceByIdHandler
 {
     private readonly IApplicationDbContext _context;
 
-    public GetStudentAttendanceByIdHandler(
-        IApplicationDbContext context)
+    public GetStudentAttendanceByIdHandler(IApplicationDbContext context)
     {
         _context = context;
     }
@@ -27,9 +26,7 @@ public sealed class GetStudentAttendanceByIdHandler
             .Select(x => new AttendanceDetailsDto
             {
                 AttendanceSessionId = x.Id,
-                AcademicSessionId = x.AcademicSessionId,
-                ClassId = x.ClassId,
-                SectionId = x.SectionId,
+                TeachingAssignmentId = x.TeachingAssignmentId,
                 AttendanceDate = x.AttendanceDate,
 
                 Students = x.StudentAttendances
@@ -51,10 +48,7 @@ public sealed class GetStudentAttendanceByIdHandler
             .FirstOrDefaultAsync(cancellationToken);
 
         if (session is null)
-        {
-            throw new InvalidOperationException(
-                "Attendance not found.");
-        }
+            throw new InvalidOperationException("Attendance not found.");
 
         return session;
     }

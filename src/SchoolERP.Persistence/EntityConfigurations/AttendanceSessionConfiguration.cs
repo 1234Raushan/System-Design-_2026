@@ -7,52 +7,30 @@ namespace SchoolERP.Persistence.EntityConfigurations;
 public sealed class AttendanceSessionConfiguration
     : IEntityTypeConfiguration<AttendanceSession>
 {
-    public void Configure(
-        EntityTypeBuilder<AttendanceSession> builder)
+    public void Configure(EntityTypeBuilder<AttendanceSession> builder)
     {
         builder.ToTable("AttendanceSessions");
 
-
         builder.HasKey(x => x.Id);
-
 
         builder.Property(x => x.AttendanceDate)
             .IsRequired();
 
-
-        builder.HasOne(x => x.AcademicSession)
+        builder.HasOne(x => x.TeachingAssignment)
             .WithMany()
-            .HasForeignKey(x => x.AcademicSessionId)
+            .HasForeignKey(x => x.TeachingAssignmentId)
             .OnDelete(DeleteBehavior.Restrict);
 
-
-        builder.HasOne(x => x.Class)
-            .WithMany()
-            .HasForeignKey(x => x.ClassId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-
-        builder.HasOne(x => x.Section)
-            .WithMany()
-            .HasForeignKey(x => x.SectionId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-
-        // One attendance per class-section-date
+        // One attendance per TeachingAssignment per Date
         builder.HasIndex(x => new
         {
-            x.AcademicSessionId,
-            x.ClassId,
-            x.SectionId,
+            x.TeachingAssignmentId,
             x.AttendanceDate
-
         })
         .IsUnique();
 
-
         builder.Property(x => x.IsActive)
             .HasDefaultValue(true);
-
 
         builder.Property(x => x.IsDeleted)
             .HasDefaultValue(false);

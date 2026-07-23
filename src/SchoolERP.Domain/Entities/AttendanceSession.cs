@@ -4,45 +4,38 @@ namespace SchoolERP.Domain.Entities;
 
 public sealed class AttendanceSession : BaseAuditableEntity
 {
-    public int AcademicSessionId { get; private set; }
-
-    public int ClassId { get; private set; }
-
-    public int SectionId { get; private set; }
+    public int TeachingAssignmentId { get; private set; }
 
     public DateOnly AttendanceDate { get; private set; }
 
-
     // Navigation
-
-    public AcademicSession AcademicSession { get; private set; } = null!;
-
-    public Class_A Class { get; private set; } = null!;
-
-    public Section Section { get; private set; } = null!;
-
+    public TeachingAssignment TeachingAssignment { get; private set; } = null!;
 
     public ICollection<Student_Attendance> StudentAttendances
     { get; private set; }
         = new List<Student_Attendance>();
 
-
     private AttendanceSession()
     {
     }
 
-
     public AttendanceSession(
-        int academicSessionId,
-        int classId,
-        int sectionId,
+        int teachingAssignmentId,
         DateOnly attendanceDate)
     {
-        AcademicSessionId = academicSessionId;
-        ClassId = classId;
-        SectionId = sectionId;
+        TeachingAssignmentId = teachingAssignmentId;
+        AttendanceDate = attendanceDate;
+    }
+
+    public void Update(DateOnly attendanceDate, bool isActive)
+    {
         AttendanceDate = attendanceDate;
 
-        CreatedDate = DateTime.UtcNow;
+        if (isActive)
+            Activate();
+        else
+            Deactivate();
+
+        MarkAsUpdated();
     }
 }

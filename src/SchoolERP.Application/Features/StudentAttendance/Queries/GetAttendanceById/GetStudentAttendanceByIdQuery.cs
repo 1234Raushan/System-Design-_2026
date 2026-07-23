@@ -10,11 +10,7 @@ public sealed class AttendanceDetailsDto
 {
     public int AttendanceSessionId { get; set; }
 
-    public int AcademicSessionId { get; set; }
-
-    public int ClassId { get; set; }
-
-    public int SectionId { get; set; }
+    public int TeachingAssignmentId { get; set; }
 
     public DateOnly AttendanceDate { get; set; }
 

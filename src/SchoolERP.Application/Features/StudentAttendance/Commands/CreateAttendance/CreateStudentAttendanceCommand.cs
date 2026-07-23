@@ -1,18 +1,22 @@
 ﻿using MediatR;
 using SchoolERP.Domain.Enums;
-using SchoolERP.Application.Features.StudentAttendance.DTOs;
 
-public sealed record CreateStudentAttendanceCommand
-    : IRequest<int>
+namespace SchoolERP.Application.Features.StudentAttendance.Commands.CreateAttendance;
+
+public sealed record CreateStudentAttendanceCommand : IRequest<int>
 {
-    public int AcademicSessionId { get; init; }
-
-    public int ClassId { get; init; }
-
-    public int SectionId { get; init; }
+    public int TeachingAssignmentId { get; init; }
 
     public DateOnly AttendanceDate { get; init; }
 
-    public List<StudentAttendanceDto> Students { get; init; }
-        = new();
+    public List<CreateStudentAttendanceItem> Students { get; init; } = [];
+}
+
+public sealed record CreateStudentAttendanceItem
+{
+    public int StudentEnrollmentId { get; init; }
+
+    public AttendanceStatus Status { get; init; }
+
+    public string? Remarks { get; init; }
 }

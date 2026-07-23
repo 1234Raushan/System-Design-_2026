@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using SchoolERP.Application.Features.StudentAttendance.DTOs;
+
 namespace SchoolERP.Application.Features.StudentAttendance.Commands.CreateAttendance;
 
 public sealed class CreateStudentAttendanceValidator
@@ -7,17 +7,9 @@ public sealed class CreateStudentAttendanceValidator
 {
     public CreateStudentAttendanceValidator()
     {
-        RuleFor(x => x.AcademicSessionId)
+        RuleFor(x => x.TeachingAssignmentId)
             .GreaterThan(0)
-            .WithMessage("Academic Session is required.");
-
-        RuleFor(x => x.ClassId)
-            .GreaterThan(0)
-            .WithMessage("Class is required.");
-
-        RuleFor(x => x.SectionId)
-            .GreaterThan(0)
-            .WithMessage("Section is required.");
+            .WithMessage("Teaching Assignment is required.");
 
         RuleFor(x => x.AttendanceDate)
             .NotEmpty()
@@ -30,7 +22,7 @@ public sealed class CreateStudentAttendanceValidator
             .WithMessage("At least one student is required.");
 
         RuleForEach(x => x.Students)
-            .SetValidator(new StudentAttendanceDtoValidator());
+            .SetValidator(new CreateStudentAttendanceItemValidator());
 
         RuleFor(x => x.Students)
             .Must(HaveUniqueStudentEnrollments)
@@ -38,7 +30,7 @@ public sealed class CreateStudentAttendanceValidator
     }
 
     private static bool HaveUniqueStudentEnrollments(
-        List<StudentAttendanceDto> students)
+        List<CreateStudentAttendanceItem> students)
     {
         if (students == null || students.Count == 0)
             return true;
@@ -50,10 +42,10 @@ public sealed class CreateStudentAttendanceValidator
     }
 }
 
-public sealed class StudentAttendanceDtoValidator
-    : AbstractValidator<StudentAttendanceDto>
+public sealed class CreateStudentAttendanceItemValidator
+    : AbstractValidator<CreateStudentAttendanceItem>
 {
-    public StudentAttendanceDtoValidator()
+    public CreateStudentAttendanceItemValidator()
     {
         RuleFor(x => x.StudentEnrollmentId)
             .GreaterThan(0)
